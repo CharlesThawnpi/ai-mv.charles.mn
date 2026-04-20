@@ -1,5 +1,7 @@
+# Home directory system files
 .antigravity-server/
 .cache/
+.codex/
 .copilot/
 .dotnet/
 .gemini/
@@ -10,16 +12,34 @@
 .viminfo
 .lesshst
 .wget-hsts
+.bash_history
+.config/
+.local/
+.npm/
+
+# Logs and output files
+*.log
+*.out
 virt-sysprep-firstboot.log
+inspection_output.txt
+results.log
+run.sh
+
+# Claude CLI
+.claude/
+.claude.json
 
 # Mac OS
 .DS_Store
 
 # Node/Monorepo ignores
+*.tsbuildinfo
 node_modules/
 dist/
 build/
+coverage/
 .turbo/
+.pnpm-store/
 apps/*/.next/
 packages/*/dist/
 .env

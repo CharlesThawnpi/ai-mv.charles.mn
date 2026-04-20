@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(uuid()) @db.Uuid
+  created_at      DateTime  @default(now()) @db.Timestamptz()
+  display_name    String?
+  preferred_locale String   @default("en")
+  is_guest        Boolean   @default(true)
+  merged_into_user_id String? @db.Uuid
+  deleted_at      DateTime? @db.Timestamptz()
+
+  auth_identities AuthIdentity[]
+  sessions        Session[]
+
+  @@map("users")
+}
+
+model AuthIdentity {
+  id               String   @id @default(uuid()) @db.Uuid
+  user_id          String   @db.Uuid
+  provider         String
+  provider_subject String
+  email            String?
+  email_verified   Boolean?
+  telegram_username String?
+  created_at       DateTime @default(now()) @db.Timestamptz()
+  last_seen_at     DateTime? @db.Timestamptz()
+
+  user             User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([provider, provider_subject])
+  @@map("auth_identities")
+}
+
+model Session {
+  id         String    @id @default(uuid()) @db.Uuid
+  user_id    String    @db.Uuid
+  provider   String
+  ip         String?   @db.Inet
+  user_agent String?
+  issued_at  DateTime  @default(now()) @db.Timestamptz()
+  expires_at DateTime  @db.Timestamptz()
+  revoked_at DateTime? @db.Timestamptz()
+
+  user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+

@@ -73,39 +73,45 @@ Must enforce **module/domain boundaries** inside the monorepo via explicit inter
 ### 1.1 Repository bootstrap
 
 - [ ] Initialize git repo (`main` as default, protected on remote)
-- [ ] `pnpm init` + workspace config
-- [ ] Add Turborepo
-- [ ] Add `.editorconfig`, `.gitignore`, `.nvmrc` (node 20)
+- [x] `pnpm init` + workspace config
+- [x] Add Turborepo
+- [x] Add `.editorconfig`, `.gitignore`, `.nvmrc` (node 20)
+  - `.gitignore` covers: `node_modules/`, `dist/`, `build/`, `coverage/`, `.turbo/`, `.pnpm-store/`, `apps/*/.next/`, `packages/*/dist/`, `*.log`, `*.out`, `.env`, `.env.*`, home-dir system files, `.claude/`, `.codex/`
+  - `.vscode/settings.json` includes `files.watcherExclude` for `node_modules`, `.next`, `.turbo`, `dist`, `coverage` to keep VS Code responsive
 - [ ] Add root `README.md` with local-dev instructions
 
 ### 1.2 Tooling baseline
 
+- [x] TypeScript strict mode (shared `tsconfig.base.json`)
+  - All 7 packages + 2 apps extend `tsconfig.base.json`; `pnpm -r run typecheck` passes clean (0 errors)
+  - `packages/config-eslint` has no typecheck script — intentional, pure-JS ESLint config package
+  - `root/package.json` adds `pnpm.onlyBuiltDependencies` for `@prisma/client`, `@prisma/engines`, `esbuild`, `prisma` (required for pnpm v10 build-script approval)
 - [ ] ESLint + Prettier (shared config in `packages/config-eslint`)
-- [ ] TypeScript strict mode (shared `tsconfig.base.json`)
 - [ ] Husky + lint-staged for pre-commit
 - [ ] Commitlint (conventional commits)
 
 ### 1.3 Backend skeleton (`packages/api`)
 
-- [ ] Fastify app factory with plugins: CORS, helmet, cookie, compress
+- [x] Fastify app factory with plugins: CORS, helmet
+- [x] Structured logging with `pino` (pretty in dev via `pino-pretty`)
+- [x] Health check: `GET /health`, `GET /healthz` (liveness) + `GET /readyz` (stub, ready for DB/Redis checks)
 - [ ] Config loader via `zod` (fails fast on missing env vars)
-- [ ] Structured logging with `pino` (JSON in prod, pretty in dev)
 - [ ] Request ID middleware; propagate to logs
 - [ ] Error handler producing stable JSON error shape
-- [ ] Health check: `GET /healthz` (liveness) + `GET /readyz` (DB + Redis + TMDB reachable)
+- [ ] Cookie and compress plugins
 - [ ] OpenAPI spec published at `/docs`
 
 ### 1.4 Database (`packages/db`)
 
-- [ ] Prisma init against PostgreSQL
-- [ ] Initial schema (minimum viable — expand in later phases):
-  - `users` — internal user identity
+- [x] Prisma init against PostgreSQL
+- [x] Initial schema (minimum viable — expand in later phases):
+  - `users` — internal user identity (with `merged_into_user_id`, `deleted_at` for merge safety)
   - `auth_identities` — rows per identity provider (google, guest, telegram)
   - `sessions`
-  - `titles_cache` — cached TMDB metadata
-  - `i18n_translations` — optional DB-backed strings (seed via files)
+- [ ] `titles_cache` table — cached TMDB metadata (deferred to 1.5/Phase 3)
 - [ ] Migration workflow: `pnpm db:migrate`, `pnpm db:seed`
 - [ ] Seed script with one demo user + a handful of TMDB-known titles
+- Note: Prisma client generation (`pnpm --filter @ai-mv/db run generate`) must run before typecheck; `pnpm.onlyBuiltDependencies` in root `package.json` enables this in pnpm v10.
 
 ### 1.5 TMDB client (`packages/tmdb`)
 
@@ -117,8 +123,10 @@ Must enforce **module/domain boundaries** inside the monorepo via explicit inter
 
 ### 1.6 Frontend skeleton (`apps/web`)
 
-- [ ] Next.js App Router project
-- [ ] Tailwind with mobile-first breakpoint strategy (`sm` = 640px, design for <640 first)
+- [x] Next.js 14 App Router project
+- [x] Tailwind CSS + PostCSS + `autoprefixer` wired up (note: `autoprefixer` must be explicit in `devDependencies` for pnpm hoisting)
+- [x] Base layout + home page placeholder (renders app name)
+- [ ] Mobile-first breakpoint strategy (`sm` = 640px, design for <640 first)
 - [ ] Base layout: top bar with app name + language toggle + (placeholder) avatar
 - [ ] Routes: `/` (home placeholder), `/healthz` (proxied to API)
 - [ ] `next-intl` wiring with `en` and `my` locales; URL strategy `/[locale]/...`
