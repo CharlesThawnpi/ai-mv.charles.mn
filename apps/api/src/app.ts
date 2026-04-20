@@ -8,6 +8,7 @@ import swaggerUi from '@fastify/swagger-ui';
 import { randomUUID } from 'node:crypto';
 import { db } from '@ai-mv/db';
 import type { Config } from './config';
+import { titlesRoutes } from './routes/titles';
 
 export const buildApp = async (config: Config) => {
   const app = Fastify({
@@ -112,6 +113,8 @@ export const buildApp = async (config: Config) => {
       return { status: healthy ? 'ready' : 'degraded', checks };
     },
   );
+
+  await titlesRoutes(app, config);
 
   return app;
 };

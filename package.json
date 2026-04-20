@@ -12,6 +12,7 @@
     "db:migrate": "pnpm --filter @ai-mv/db run migrate",
     "db:migrate:deploy": "pnpm --filter @ai-mv/db run migrate:deploy",
     "db:migrate:status": "pnpm --filter @ai-mv/db run migrate:status",
+    "tmdb:probe": "pnpm --filter @ai-mv/tmdb run probe --",
     "prepare": "husky"
   },
   "devDependencies": {

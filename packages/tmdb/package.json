@@ -5,14 +5,18 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
+    "probe": "tsx src/probe.ts",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-mv/shared": "workspace:*"
+    "@ai-mv/shared": "workspace:*",
+    "dotenv": "^16.6.1",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@ai-mv/config-eslint": "workspace:*",
+    "tsx": "^4.21.0",
     "typescript": "^5.4.5"
   }
 }
