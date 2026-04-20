@@ -1,0 +1,27 @@
+.antigravity-server/
+.cache/
+.copilot/
+.dotnet/
+.gemini/
+.qwen/
+.vscode-server/
+.bashrc
+.profile
+.viminfo
+.lesshst
+.wget-hsts
+virt-sysprep-firstboot.log
+
+# Mac OS
+.DS_Store
+
+# Node/Monorepo ignores
+node_modules/
+dist/
+build/
+.turbo/
+apps/*/.next/
+packages/*/dist/
+.env
+.env.*
+!.env.example
