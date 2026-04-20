@@ -1,6 +1,10 @@
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin('./i18n.ts');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["@ai-mv/shared", "@ai-mv/core", "@ai-mv/i18n"],
+  transpilePackages: ['@ai-mv/shared', '@ai-mv/core', '@ai-mv/i18n', '@ai-mv/tmdb'],
 
   // NEXT_PUBLIC_API_URL is embedded at build time for client-side use.
   // API_BASE_URL is available server-side only (server components / route handlers).
@@ -10,4 +14,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);
