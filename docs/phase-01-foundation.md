@@ -114,10 +114,21 @@ Must enforce **module/domain boundaries** inside the monorepo via explicit inter
 - [x] `db` PrismaClient singleton exported from `packages/db/src/index.ts` (globalThis pattern prevents duplicate connections during hot-reload)
   - `@types/node` added to `packages/db` devDeps (required for `process.env`/`globalThis` usage)
   - `@ai-mv/db` moved from devDeps → deps in `apps/api/package.json` (runtime, not build-only)
+- [x] Migration workflow scripts added to `packages/db/package.json`:
+  - `generate` — regenerate Prisma client after schema changes
+  - `migrate` — `prisma migrate dev` (dev: creates + applies, interactive)
+  - `migrate:deploy` — `prisma migrate deploy` (CI/prod: applies pending, non-interactive)
+  - `migrate:status` — inspect applied vs pending migrations
+  - `migrate:reset` — full dev reset (kept in package scope only; no root shortcut, intentionally dangerous)
+  - `validate` — schema syntax check (requires DATABASE_URL in env or `packages/db/.env`)
+  - `format` — `prisma format` to auto-align schema.prisma columns
+  - `studio` — visual DB browser (dev only)
+- [x] Root `package.json` shortcuts: `db:generate`, `db:migrate`, `db:migrate:deploy`, `db:migrate:status`
+- [x] `packages/db/.env` pattern: Prisma CLI reads DATABASE_URL from `packages/db/.env` (gitignored); copy DATABASE_URL from root `.env.example` when setting up locally
+- [ ] Initial migration file — requires a running PostgreSQL instance; run `pnpm db:migrate` once DB is provisioned (Docker Compose in 1.8)
 - [ ] `titles_cache` table — cached TMDB metadata (deferred to 1.5/Phase 3)
-- [ ] Migration workflow: `pnpm db:migrate`, `pnpm db:seed`
-- [ ] Seed script with one demo user + a handful of TMDB-known titles
-- Note: Prisma client generation (`pnpm --filter @ai-mv/db run generate`) must run before typecheck; `pnpm.onlyBuiltDependencies` in root `package.json` enables this in pnpm v10.
+- [ ] Seed script with one demo user + a handful of TMDB-known titles (deferred, needs migration applied first)
+- Note: Prisma client generation (`pnpm db:generate`) must run on fresh checkout before typecheck; `pnpm.onlyBuiltDependencies` in root `package.json` enables this in pnpm v10.
 
 ### 1.5 TMDB client (`packages/tmdb`)
 
