@@ -125,7 +125,14 @@ Must enforce **module/domain boundaries** inside the monorepo via explicit inter
   - `studio` — visual DB browser (dev only)
 - [x] Root `package.json` shortcuts: `db:generate`, `db:migrate`, `db:migrate:deploy`, `db:migrate:status`
 - [x] `packages/db/.env` pattern: Prisma CLI reads DATABASE_URL from `packages/db/.env` (gitignored); copy DATABASE_URL from root `.env.example` when setting up locally
-- [ ] Initial migration file — requires a running PostgreSQL instance; run `pnpm db:migrate` once DB is provisioned (Docker Compose in 1.8)
+- [x] Initial migration file created and applied: `packages/db/prisma/migrations/20260420152755_init/migration.sql`
+  - PostgreSQL 16 installed on VPS (`apt install postgresql`); service enabled and started
+  - Project user `ai_mv` created with `CREATEDB` privilege (required for Prisma shadow DB during `migrate dev`)
+  - Database `ai_recommender` created and owned by `ai_mv`
+  - `DATABASE_URL` updated in `/root/.env` and `packages/db/.env` (both gitignored): `postgresql://ai_mv:***@localhost:5432/ai_recommender`
+  - `pnpm --filter @ai-mv/db run migrate:status` → `Database schema is up to date!`
+  - `GET /readyz` → `200 { status: 'ready', checks: { database: 'ok' } }` confirmed
+  - Migration run via `npx prisma migrate dev --name init` directly (pnpm `-- --name` passes arg literally in v10; use npx or run prisma directly for named migrations)
 - [ ] `titles_cache` table — cached TMDB metadata (deferred to 1.5/Phase 3)
 - [ ] Seed script with one demo user + a handful of TMDB-known titles (deferred, needs migration applied first)
 - Note: Prisma client generation (`pnpm db:generate`) must run on fresh checkout before typecheck; `pnpm.onlyBuiltDependencies` in root `package.json` enables this in pnpm v10.
