@@ -1,0 +1,27 @@
+# Replace yourdomain.com with your actual domain.
+# Caddy auto-provisions TLS via Let's Encrypt.
+
+yourdomain.com {
+    # Web frontend
+    reverse_proxy web:3000
+
+    # API — proxy /api/* and /healthz /readyz /docs
+    handle /api/* {
+        reverse_proxy api:4000
+    }
+    handle /healthz {
+        reverse_proxy api:4000
+    }
+    handle /readyz {
+        reverse_proxy api:4000
+    }
+    handle /docs* {
+        reverse_proxy api:4000
+    }
+
+    encode gzip
+    log {
+        output stdout
+        format json
+    }
+}
