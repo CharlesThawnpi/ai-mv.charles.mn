@@ -12,6 +12,7 @@
     "@ai-mv/shared": "workspace:*"
   },
   "devDependencies": {
+    "@ai-mv/config-eslint": "workspace:*",
     "typescript": "^5.4.5"
   }
 }
