@@ -1,0 +1,44 @@
+{
+  "common": {
+    "app_name": "AI Recommender",
+    "language_toggle": "မြန်မာ",
+    "loading": "Loading…",
+    "error_generic": "Something went wrong. Please try again.",
+    "retry": "Retry",
+    "back": "Back",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "auth": {
+    "sign_in": "Sign in",
+    "sign_in_google": "Sign in with Google",
+    "sign_out": "Sign out",
+    "continue_as_guest": "Continue as Guest",
+    "welcome_back": "Welcome back",
+    "create_account": "Create account"
+  },
+  "onboarding": {
+    "title": "What do you enjoy watching?",
+    "subtitle": "Pick a few genres to get started",
+    "skip": "Skip for now",
+    "finish": "Let's go"
+  },
+  "recommend": {
+    "trending": "Trending",
+    "for_you": "For You",
+    "because_you_watched": "Because you watched",
+    "no_results": "No results found",
+    "see_more": "See more",
+    "movie": "Movie",
+    "tv_show": "TV Show",
+    "rating": "Rating",
+    "release_year": "Year"
+  },
+  "bot": {
+    "start": "Hello! I can recommend movies and TV shows. Send /recommend to get started.",
+    "help": "Commands: /recommend — get personalised picks  /trending — see what's popular",
+    "recommend_prompt": "What are you in the mood for?",
+    "no_recommendations": "No recommendations available yet. Try searching for something first."
+  }
+}
