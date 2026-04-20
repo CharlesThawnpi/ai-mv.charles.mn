@@ -11,7 +11,7 @@ dotenv.config({ path: resolve(process.cwd(), '.env') });
 
 import { TmdbClient } from './client';
 
-const query = process.argv[2];
+const query = process.argv.slice(2).find((a) => a !== '--');
 if (!query) {
   console.error('Usage: pnpm tmdb:probe "<search query>"');
   process.exit(1);

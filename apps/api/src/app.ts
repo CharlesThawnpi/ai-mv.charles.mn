@@ -108,6 +108,17 @@ export const buildApp = async (config: Config) => {
         checks.database = 'error';
       }
 
+      if (config.TMDB_API_KEY) {
+        try {
+          const res = await fetch(
+            `${config.TMDB_API_BASE}/configuration?api_key=${config.TMDB_API_KEY}`,
+          );
+          checks.tmdb = res.ok ? 'ok' : 'error';
+        } catch {
+          checks.tmdb = 'error';
+        }
+      }
+
       const healthy = Object.values(checks).every((v) => v === 'ok');
       reply.code(healthy ? 200 : 503);
       return { status: healthy ? 'ready' : 'degraded', checks };
