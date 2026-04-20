@@ -1,11 +1,19 @@
+import { resolve } from 'node:path';
+import dotenv from 'dotenv';
+
+// Load .env from monorepo root before any process.env reads.
+// process.cwd() is apps/api/ when run via pnpm/turbo — two levels up reaches root.
+dotenv.config({ path: resolve(process.cwd(), '../../.env'), override: false });
+
+import { loadConfig } from './config';
 import { buildApp } from './app';
 
 const start = async () => {
   try {
-    const app = await buildApp();
-    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
-    await app.listen({ port, host: '0.0.0.0' });
-    app.log.info(`API Server running on port ${port}`);
+    const config = loadConfig();
+    const app = await buildApp(config);
+    await app.listen({ port: config.PORT, host: '0.0.0.0' });
+    app.log.info(`API Server running on port ${config.PORT}`);
   } catch (err) {
     console.error(err);
     process.exit(1);

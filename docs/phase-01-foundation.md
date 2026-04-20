@@ -93,9 +93,12 @@ Must enforce **module/domain boundaries** inside the monorepo via explicit inter
 ### 1.3 Backend skeleton (`packages/api`)
 
 - [x] Fastify app factory with plugins: CORS, helmet
-- [x] Structured logging with `pino` (pretty in dev via `pino-pretty`)
-- [x] Health check: `GET /health`, `GET /healthz` (liveness) + `GET /readyz` (stub, ready for DB/Redis checks)
-- [ ] Config loader via `zod` (fails fast on missing env vars)
+- [x] Structured logging with `pino` (pretty in dev via `pino-pretty`; level driven by `LOG_LEVEL` config)
+- [x] Config loader via `zod` (`apps/api/src/config.ts`): fails fast on missing `DATABASE_URL`; optional Phase-2 placeholders (`SESSION_SECRET`, `GOOGLE_*`) validated but not required
+  - `dotenv` loads root `.env` at startup via `dotenv.config({ path: resolve(cwd, '../../.env') })`
+  - Config type exported as `Config`; passed into `buildApp(config)` — no `process.env` scattered in app code
+- [x] `/health` + `/healthz` — liveness, always 200
+- [x] `/readyz` — attempts `db.$queryRaw\`SELECT 1\``; returns `200 { status:'ready' }` or `503 { status:'degraded', checks }` (DB down = degraded, not crash)
 - [ ] Request ID middleware; propagate to logs
 - [ ] Error handler producing stable JSON error shape
 - [ ] Cookie and compress plugins
@@ -108,6 +111,9 @@ Must enforce **module/domain boundaries** inside the monorepo via explicit inter
   - `users` — internal user identity (with `merged_into_user_id`, `deleted_at` for merge safety)
   - `auth_identities` — rows per identity provider (google, guest, telegram)
   - `sessions`
+- [x] `db` PrismaClient singleton exported from `packages/db/src/index.ts` (globalThis pattern prevents duplicate connections during hot-reload)
+  - `@types/node` added to `packages/db` devDeps (required for `process.env`/`globalThis` usage)
+  - `@ai-mv/db` moved from devDeps → deps in `apps/api/package.json` (runtime, not build-only)
 - [ ] `titles_cache` table — cached TMDB metadata (deferred to 1.5/Phase 3)
 - [ ] Migration workflow: `pnpm db:migrate`, `pnpm db:seed`
 - [ ] Seed script with one demo user + a handful of TMDB-known titles
@@ -126,6 +132,9 @@ Must enforce **module/domain boundaries** inside the monorepo via explicit inter
 - [x] Next.js 14 App Router project
 - [x] Tailwind CSS + PostCSS + `autoprefixer` wired up (note: `autoprefixer` must be explicit in `devDependencies` for pnpm hoisting)
 - [x] Base layout + home page placeholder (renders app name)
+- [x] API base URL config: `apps/web/lib/config.ts` exports `apiBaseUrl` from `NEXT_PUBLIC_API_URL`
+  - `next.config.mjs` passes `NEXT_PUBLIC_API_URL` through to client bundle via `env:` field
+  - `apps/web/.env.local` (gitignored) sets `NEXT_PUBLIC_API_URL=http://localhost:4000` for local dev
 - [ ] Mobile-first breakpoint strategy (`sm` = 640px, design for <640 first)
 - [ ] Base layout: top bar with app name + language toggle + (placeholder) avatar
 - [ ] Routes: `/` (home placeholder), `/healthz` (proxied to API)
