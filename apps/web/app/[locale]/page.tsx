@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl';
+import { setRequestLocale } from 'next-intl/server';
 import { apiBaseUrl } from '../../lib/config';
 import type { Title, PaginatedResult } from '@ai-mv/tmdb';
 
@@ -15,7 +16,8 @@ async function fetchTrending(): Promise<Title[]> {
   }
 }
 
-export default async function HomePage() {
+export default async function HomePage({ params }: { params: { locale: string } }) {
+  setRequestLocale(params.locale);
   const titles = await fetchTrending();
 
   return (
